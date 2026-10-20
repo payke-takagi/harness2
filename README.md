@@ -1,3 +1,6 @@
+> This fork adds ChatGPT-authenticated Codex execution for local tasks while
+> retaining Google's Harness² method. See [setup and scope](docs/CHATGPT_CODEX.md).
+
 <h3 align="center">
   <img src="assets/Harness2-wordmark.png" alt="Harness²" width="360"><br>
   Recursive Agent Harnessing for an Open World

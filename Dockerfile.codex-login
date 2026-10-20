@@ -1,0 +1,10 @@
+FROM node:24-trixie-slim
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3 git ca-certificates && rm -rf /var/lib/apt/lists/*
+ARG CODEX_VERSION=0.160.0
+RUN npm install --global @openai/codex@${CODEX_VERSION}
+COPY harness2 /opt/harness2/harness2
+COPY examples/local-ledger /opt/harness2/examples/local-ledger
+ENV PYTHONPATH=/opt/harness2
+WORKDIR /tmp
+ENTRYPOINT ["python3", "-u", "-m", "harness2.cli.local"]
