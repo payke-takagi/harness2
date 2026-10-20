@@ -79,9 +79,7 @@ def resolve_channel_model(
             f"in HARNESS2_IMPROVER_MODEL or HARNESS2_SOLVER_MODEL, got {model!r}"
         )
     if kind in ("claude_cli", "codex_cli") and "/" in model:
-        raise ValueError(
-            f"{kind} channel takes a bare model id, got {model!r}"
-        )
+        raise ValueError(f"{kind} channel takes a bare model id, got {model!r}")
     return ChannelSpec(kind, model, effort=effort, steps=steps, timeout=timeout)
 
 

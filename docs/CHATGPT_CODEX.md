@@ -44,6 +44,15 @@ The local adapter rejects model-authored hooks and subagents.
 
 ## Local tasks
 
+Install the fork in a Python 3.12 environment:
+
+```sh
+uv venv --python 3.12 .venv
+uv pip install --python .venv/bin/python -e .
+```
+
+Use `.venv/bin/harness2-local` below (or activate that environment first).
+
 Use a dedicated harness directory with `AGENTS.md` and optionally
 `.agents/skills/<name>/SKILL.md` and `scripts/*.py`. Unsupported files are
 rejected, not silently dropped. Skill `references/` files are not yet supported

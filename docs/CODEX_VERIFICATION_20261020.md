@@ -39,16 +39,40 @@ hashes and modification times unchanged. The explicit external-sandbox setting
 of the live invocation was recorded in its input manifest before this resume
 check, after that field was added to the resume identity.
 
+## Role-tuning comparison
+
+This experiment finished before the user deferred speed/model tuning. The
+low-effort setting is not adopted; medium remains the integration baseline.
+
+The same task executor stayed on gpt-6.1-sol/medium. Only proposal/composition,
+selection and reflection effort changed from medium to low; the model and
+published method were not changed.
+
+| Improvement effort | Total elapsed, two tasks | Correct adopted answers | Saved experience entries |
+|---|---:|---:|---:|
+| medium | 416.2 s | 2/2 | 0 |
+| low | 300.3 s | 2/2 | 2 |
+
+The low-effort run was about 28% shorter in this one comparison. Both successful
+runs used 8 task-executor calls and 8 proposal/reflection calls. The first
+low-effort task's experience file was present in the second task's improvement
+context. This verifies the handoff path, not that experience caused the speedup
+or that every future task becomes faster. There was one run per setting and
+only two small arithmetic tasks; cache warmth and model variation are not
+controlled. No production model settings were changed.
+
 ## Limits
 
 - At k=1 there is only one composed final, so upstream makes a trivial selection
   without an additional selector model call. Model-backed k>1 selection and
   sequential mode were not exercised here; upstream deterministic tests cover
   their workflow contracts.
-- Reflection ran on both tasks but returned no transferable experience entry.
+- In the medium baseline, reflection ran on both tasks but returned no transferable experience entry.
   No experience-library entries were stored, as required by the upstream
   evidence gate. This run demonstrates better task outputs, not proven
-  cross-task learning. The original upstream tests exercise library carryover.
+  cross-task learning. The low-effort run above stored and passed experience;
+  its usefulness on other work is still unverified. The original upstream tests
+  also exercise library carryover.
 - This is an integration example, not a measurement of Peco's shipping accuracy.
   Production Slack/MCP connections, business-data replay, scheduling, candidate
   adoption and deployment have not been implemented or verified.
