@@ -103,6 +103,10 @@ class Proposer:
             raise ValueError("Set HARNESS2_IMPROVER_MODEL before starting model sessions")
 
     def env(self) -> dict[str, str]:
+        if self.spec.kind == "codex_cli":
+            from ..substrate.codex_login import login_environment
+
+            return login_environment()
         e = {k: v for k, v in os.environ.items() if k not in _DROP_ENV}
         if self.spec.kind == "claude_cli":
             e.update(
@@ -159,9 +163,9 @@ class Proposer:
                 if context_dir and Path(context_dir).is_dir():
                     shutil.copytree(context_dir, tmp / "context", dirs_exist_ok=True)
                 with _SEM if _SEM is not None else contextlib.nullcontext():
-                    text, cost, err = (
-                        self._claude_cli if self.spec.kind == "claude_cli" else self._opencode
-                    )(tmp, mission, system, wall)
+                    text, cost, err = getattr(self, f"_{self.spec.kind}")(
+                        tmp, mission, system, wall
+                    )
                 spent_usd += cost
                 if not text.strip():
                     last = err or "empty reply"
@@ -206,6 +210,13 @@ class Proposer:
             attempts=tries,
             cost_usd=spent_usd,
         )
+
+    def _codex_cli(self, cwd: Path, mission: str, system: str, wall: int) -> tuple[str, float, str]:
+        from ..substrate.codex_login import run_codex
+
+        prompt = f"{system}\n\n{mission}" if system else mission
+        result = run_codex(cwd, prompt, self.spec.model, self.spec.effort, wall)
+        return result.text, 0.0, result.error
 
     def _claude_cli(
         self, cwd: Path, mission: str, system: str, wall: int
